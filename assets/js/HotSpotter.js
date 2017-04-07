@@ -9,8 +9,6 @@
 var MOS = MOS || {};
 MOS.HosSpotter = function (targetSelector, opt) {
 
-    
-
     var that = this;
 
     that.target= document.querySelector(targetSelector);
@@ -22,7 +20,10 @@ MOS.HosSpotter = function (targetSelector, opt) {
     that.id = 'HosSpotter_' + MOS.HosSpotter.getId();
     that.dots = {};
     that.currentDot = null;
-
+    that.templates = {
+        dot: '<div id="{{id}}" class="hotspotter-dot" style="left: {{left}}; top: {{top}};" title="{{title}}"></div>',
+        balloon: '<div class="hotspotter-balloon collapsed {{tailPosition}}">{{html}}</div>'
+    };
     that.isTouchDevice = ('ontouchstart' in window ||navigator.maxTouchPoints);
     that.trigger = opt.trigger ||  'click';
     that.tailPosition = opt.tailPosition ||  'bottom';
@@ -119,7 +120,7 @@ MOS.HotSpotDot = function (data, parent) {
         top: data.top
     };
 
-    var html = that.tmpl.render('hotspotter-dot-template', tmpData);
+    var html = that.tmpl.put(that.parent.templates.dot, tmpData);
     container.insertAdjacentHTML('beforeend', html);
     that.dotElement = container.querySelector('#' + tmpData.id);
     that.dotSize = that.dotElement.offsetWidth;
@@ -142,6 +143,10 @@ MOS.HotSpotDot.prototype.show = function () {
         tailSize,
         html;
 
+    if (that.isExpaned) {
+        return;
+    }
+
     function getTailSize() {
 
         var computedStyle = window.getComputedStyle(that.parent.balloonElement, ':after');
@@ -155,14 +160,10 @@ MOS.HotSpotDot.prototype.show = function () {
         
     }
 
-    if(that.data.action) {
-        that.data.action(that);
-    }
-
     if(that.data.html) {
 
         tmpData = {html: that.data.html, tailPosition: tailPos};
-        html = that.tmpl.render('hotspotter-balloon-template', tmpData);
+        html = that.tmpl.put(that.parent.templates.balloon, tmpData);
         that.parent.balloonWrapper.innerHTML = html;
         that.parent.balloonElement = that.parent.balloonWrapper.querySelector('.hotspotter-balloon');
         tailSize = getTailSize();
@@ -180,14 +181,23 @@ MOS.HotSpotDot.prototype.show = function () {
         that.collapse();
     }
 
+    if(that.data.action) {
+        that.data.action(that);
+    }
+
 };
 
 MOS.HotSpotDot.prototype.expand = function () {
 
     var that = this;
-    //that.parent.balloonElement.style.visibility = 'visible';
+
+    if (that.parent.currentDot) {
+        that.parent.currentDot.isExpaned = false;
+    }
+    
     that.parent.balloonElement.classList.remove('collapsed');
-    that.parent.currentDot = that;
+    that.parent.currentDot = that;   
+    that.isExpaned = true;
 
 };
 
@@ -197,6 +207,10 @@ MOS.HotSpotDot.prototype.collapse = function () {
     if (that.parent.balloonElement) {
         that.parent.balloonElement.classList.add('collapsed');
         that.parent.currentDot = null;
+    }
+    that.isExpaned = false;
+    if (that.parent.currentDot) {
+        that.parent.currentDot.isExpaned = false;
     }
 
 };
