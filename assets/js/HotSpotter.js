@@ -21,6 +21,7 @@ MOS.HosSpotter = function (targetSelector, opt) {
     
     that.id = 'HosSpotter_' + MOS.HosSpotter.getId();
     that.dots = {};
+    that.currentDot = null;
 
     that.isTouchDevice = ('ontouchstart' in window ||navigator.maxTouchPoints);
     that.trigger = opt.trigger ||  'click';
@@ -31,6 +32,24 @@ MOS.HosSpotter = function (targetSelector, opt) {
     if (that.isTouchDevice && that.trigger === 'click') {
         that.trigger = 'touchstart';
     }
+
+    document.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        if (that.currentDot) {
+            that.currentDot.collapse();
+        }
+
+    });
+
+    window.addEventListener('keydown', function(e){
+        if((e.key=='Escape'||e.key=='Esc'||e.keyCode==27) && (e.target.nodeName=='BODY')){
+            e.preventDefault();
+            if (that.currentDot) {
+                that.currentDot.collapse();
+            }
+        }
+    }, true);
 
     that.balloonWrapper = that.container.querySelector('.hotspotter-balloon-wrapper');
 
@@ -107,6 +126,7 @@ MOS.HotSpotDot = function (data, parent) {
 
     that.dotElement.addEventListener(that.parent.trigger, function (e) {
         e.preventDefault();
+        e.stopPropagation();
         that.show(e.target.id);
     });
 
@@ -121,7 +141,6 @@ MOS.HotSpotDot.prototype.show = function () {
         tmpData,
         tailSize,
         html;
-
 
     function getTailSize() {
 
@@ -167,6 +186,7 @@ MOS.HotSpotDot.prototype.expand = function () {
 
     var that = this;
     that.parent.balloonElement.style.visibility = 'visible';
+    that.parent.currentDot = that;
 
 };
 
@@ -175,6 +195,7 @@ MOS.HotSpotDot.prototype.collapse = function () {
     var that = this;
     if (that.parent.balloonElement) {
         that.parent.balloonElement.style.visibility = 'hidden';
+        that.parent.currentDot = null;
     }
 
 };
