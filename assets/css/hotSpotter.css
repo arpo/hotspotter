@@ -1,0 +1,66 @@
+.hotSpotter {
+    position: relative;
+}
+
+.hotSpotter .hotSpotter-inner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-dot {
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    background-color: yellow;
+    border-radius: 50%;
+    border: 3px solid green;
+    cursor: pointer;
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon {
+    position: absolute;
+    background-color: #ffffff;
+    width: 300px;
+    padding: 20px;
+    -moz-box-shadow: 0px 0px 35px 0px rgba(0, 0, 0, 0.7);
+    -webkit-box-shadow: 0px 0px 35px 0px rgba(0, 0, 0, 0.7);
+    -ms-box-shadow: 0px 0px 35px 0px rgba(0, 0, 0, 0.7);
+    box-shadow: 0px 0px 35px 0px rgba(0, 0, 0, 0.7);
+    visibility: hidden;
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon:after {
+      content: "";
+      position: absolute;
+      border-style: solid;
+      width: 0;
+      height: 0;
+      border-width: 10px;
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.left:after {
+      border-color: transparent #FFFFFF transparent transparent;
+      top: calc(50% - 10px);
+      left: -20px;
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.right:after {
+      border-color: transparent transparent transparent #FFFFFF;
+      top: calc(50% - 10px);
+      right: -20px;
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.top:after {
+      border-color: transparent transparent #FFFFFF transparent;
+      top: -20px;
+      left: calc(50% - 10px);
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.bottom:after {
+      border-color: #FFFFFF transparent transparent transparent;
+      bottom: -20px;
+      left: calc(50% - 10px);
+}
