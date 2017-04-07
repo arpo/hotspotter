@@ -37,7 +37,7 @@ MOS.main = (function () {
 			left: '70%',
 			top: '59%',
 			action: function() {
-				console.log('Clicked');
+				alert('Yay!');
 			}
 		});
 

@@ -185,7 +185,8 @@ MOS.HotSpotDot.prototype.show = function () {
 MOS.HotSpotDot.prototype.expand = function () {
 
     var that = this;
-    that.parent.balloonElement.style.visibility = 'visible';
+    //that.parent.balloonElement.style.visibility = 'visible';
+    that.parent.balloonElement.classList.remove('collapsed');
     that.parent.currentDot = that;
 
 };
@@ -194,7 +195,7 @@ MOS.HotSpotDot.prototype.collapse = function () {
 
     var that = this;
     if (that.parent.balloonElement) {
-        that.parent.balloonElement.style.visibility = 'hidden';
+        that.parent.balloonElement.classList.add('collapsed');
         that.parent.currentDot = null;
     }
 
