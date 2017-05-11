@@ -171,8 +171,23 @@ MOS.HotSpotDot.prototype.show = function () {
         that.height = that.parent.balloonElement.offsetHeight;
         
         if (tailPos === 'top') {
-            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + ((that.width - (that.dotSize - 2)) * 0.5) + 'px)'; 
-            that.parent.balloonElement.style.top = 'calc(' + that.top + ' + ' + ((tailSize * 2) + that.parent.tailOffset) + 'px)'; 
+            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + ((that.width - (that.dotSize)) * 0.5) + 'px)'; 
+            that.parent.balloonElement.style.top = 'calc(' + that.top + ' + ' + (tailSize + that.dotSize + that.parent.tailOffset) + 'px)'; 
+        }
+
+        if (tailPos === 'bottom') {
+            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + ((that.width - (that.dotSize)) * 0.5) + 'px)'; 
+            that.parent.balloonElement.style.top = 'calc(' + (that.top) + ' - ' + (that.height + tailSize + that.parent.tailOffset) + 'px)'; 
+        }
+
+        if (tailPos === 'right') {
+            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + (that.width + that.dotSize) + 'px)'; 
+            that.parent.balloonElement.style.top = 'calc(' + that.top + ' - ' + (that.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
+        }
+
+        if (tailPos === 'left') {
+            that.parent.balloonElement.style.left = 'calc(' + that.left + ' + ' + (that.dotSize + tailSize + that.parent.tailOffset) + 'px)'; 
+            that.parent.balloonElement.style.top = 'calc(' + that.top + ' - ' + (that.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
         }
 
         if (that.data.html) {
@@ -180,6 +195,7 @@ MOS.HotSpotDot.prototype.show = function () {
         } else if(that.data.action) {
             that.expand(false);
             that.data.action(that);
+            that.collapse();
         }
 
     } else {

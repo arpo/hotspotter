@@ -18,11 +18,12 @@
     border-radius: 50%;
     border: 3px solid green;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 .hotSpotter .hotSpotter-inner .hotspotter-balloon {
     position: absolute;
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.9);
     width: 300px;
     padding: 20px;
     -moz-box-shadow: 0px 0px 35px 0px rgba(0, 0, 0, 0.7);
@@ -51,27 +52,6 @@
     visibility: hidden;
 }
 
-.hotSpotter .hotSpotter-inner .hotspotter-balloon:after {
-    content: "";
-    position: absolute;
-    border-style: solid;
-    width: 0;
-    height: 0;
-    border-width: 10px;
-}
-
-.hotSpotter .hotSpotter-inner .hotspotter-balloon.left:after {
-    border-color: transparent #FFFFFF transparent transparent;
-    top: calc(50% - 10px);
-    left: -20px;
-}
-
-.hotSpotter .hotSpotter-inner .hotspotter-balloon.right:after {
-    border-color: transparent transparent transparent #FFFFFF;
-    top: calc(50% - 10px);
-    right: -20px;
-}
-
 .hotSpotter .hotSpotter-inner .hotspotter-balloon.top {
     -ms-transform-origin: top center;
     -moz-transform-origin: top center;
@@ -79,14 +59,35 @@
     transform-origin: top center;
 }
 
+.hotSpotter .hotSpotter-inner .hotspotter-balloon:after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    width: 0;
+    height: 0;
+    border-width: 10px; /* Tailsize */
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.left:after {
+    border-color: transparent #FFFFFF transparent transparent;
+    top: calc(50% - 10px); /* <-- Tailsize */
+    left: -20px; /* <-- Tailsize * 2 */
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.right:after {
+    border-color: transparent transparent transparent #FFFFFF;
+    top: calc(50% - 10px); /* <-- Tailsize */
+    right: -20px; /* <-- Tailsize * 2 */
+}
+
 .hotSpotter .hotSpotter-inner .hotspotter-balloon.top:after {
     border-color: transparent transparent #FFFFFF transparent;
-    top: -20px;
-    left: calc(50% - 10px);
+    top: -20px; /* <-- Tailsize * 2 */
+    left: calc(50% - 10px); /* <-- Tailsize */
 }
 
 .hotSpotter .hotSpotter-inner .hotspotter-balloon.bottom:after {
     border-color: #FFFFFF transparent transparent transparent;
-    bottom: -20px;
-    left: calc(50% - 10px);
+    bottom: -20px; /* <-- Tailsize * 2 */
+    left: calc(50% - 10px); /* <-- Tailsize */
 }

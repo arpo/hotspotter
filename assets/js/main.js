@@ -37,9 +37,19 @@ MOS.main = (function () {
 			left: '70%',
 			top: '59%',
 			action: function() {
-				console.log('Yay!');
+				alert('Yay!');
 			}
 		});
+
+
+		var dot4 = hs.add({
+			title: 'Hot spot 4',
+			left: '49.5%',
+			top: '60%',
+			html: '<h1>Excepteur</h1><p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'
+		});
+
+		dot4.show();
 
 	}
 
