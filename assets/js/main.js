@@ -49,7 +49,7 @@ MOS.main = (function () {
 			html: '<h1>Excepteur</h1><p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'
 		});
 
-		dot4.show();
+		//dot4.show();
 
 	}
 
