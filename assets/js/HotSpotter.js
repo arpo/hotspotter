@@ -160,7 +160,7 @@ MOS.HotSpotDot.prototype.show = function () {
         
     }
 
-    if(that.data.html) {
+    if(that.data.html || that.data.action) {
 
         tmpData = {html: that.data.html, tailPosition: tailPos};
         html = that.tmpl.put(that.parent.templates.balloon, tmpData);
@@ -175,27 +175,35 @@ MOS.HotSpotDot.prototype.show = function () {
             that.parent.balloonElement.style.top = 'calc(' + that.top + ' + ' + ((tailSize * 2) + that.parent.tailOffset) + 'px)'; 
         }
 
-        that.expand();
+        if (that.data.html) {
+            that.expand();
+        } else if(that.data.action) {
+            that.expand(false);
+            that.data.action(that);
+        }
 
     } else {
         that.collapse();
     }
 
-    if(that.data.action) {
-        that.data.action(that);
-    }
-
 };
 
-MOS.HotSpotDot.prototype.expand = function () {
+MOS.HotSpotDot.prototype.expand = function (showBalloon) {
 
     var that = this;
+
+    if (typeof(showBalloon) === 'undefined') {
+        showBalloon = true;
+    }
 
     if (that.parent.currentDot) {
         that.parent.currentDot.isExpaned = false;
     }
     
-    that.parent.balloonElement.classList.remove('collapsed');
+    if (showBalloon) {
+        that.parent.balloonElement.classList.remove('collapsed');
+    }
+
     that.parent.currentDot = that;   
     that.isExpaned = true;
 
