@@ -16,7 +16,7 @@ MOS.HosSpotter = function (targetSelector, opt) {
 
     that.container = document.querySelector(targetSelector + ' .hotSpotter-inner');
     that.opt = opt || {};
-    
+    that.padding = '5px';
     that.id = 'HosSpotter_' + MOS.HosSpotter.getId();
     that.dots = {};
     that.currentDot = null;
@@ -53,6 +53,14 @@ MOS.HosSpotter = function (targetSelector, opt) {
             }
         }
     }, true);
+
+    window.addEventListener('resize', function(event){
+    
+        if (that.currentDot) {
+            that.currentDot.collapse();
+        }
+
+    });
 
     that.balloonWrapper = that.container.querySelector('.hotspotter-balloon-wrapper');
 
@@ -114,12 +122,11 @@ MOS.HotSpotDot = function (data, parent) {
     var that = this;
     that.parent = parent;
 
-    var tmpl = null;
-    var tmpData = null;
-    var container = that.parent.container;
+    var tmpl = null,
+        tmpData = null,
+        container = that.parent.container;
 
     that.data = data || {};
-
     that.left = that.data.left;
     that.top = that.data.top;
     that.info = {};
@@ -193,7 +200,8 @@ MOS.HotSpotDot.prototype.show = function () {
             top: {},
             bottom: {},
             left: {},
-            right: {}
+            right: {},
+            center: {}
         };
 
         that.info.mode.top.left = 'calc(' + that.left + ' - ' + ((that.info.width - (that.dotSize)) * 0.5) + 'px)'; 
@@ -208,16 +216,29 @@ MOS.HotSpotDot.prototype.show = function () {
         that.info.mode.left.left = 'calc(' + that.left + ' + ' + (that.dotSize + tailSize + that.parent.tailOffset) + 'px)'; 
         that.info.mode.left.top = 'calc(' + that.top + ' - ' + (that.info.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
 
-        var useThisTailPosition = that.testPosition();
-        console.log(useThisTailPosition);
+        that.info.mode.center.left = 'calc(' + that.left + ' - ' + ((that.info.width - (that.dotSize)) * 0.5) + 'px)'; 
+        that.info.mode.center.top = 'calc(' + that.top + ' - ' + (that.info.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
 
+        var useThisTailPosition = that.testPosition();
+        
         if (useThisTailPosition !== 'none') {
+
             that.parent.balloonElement.classList.remove(tailPos);
             that.parent.balloonElement.classList.add(useThisTailPosition);
             that.parent.balloonElement.style.left = that.info.mode[useThisTailPosition].left;
             that.parent.balloonElement.style.top = that.info.mode[useThisTailPosition].top;
-        } 
-        
+
+        } else {
+
+            that.parent.balloonElement.classList.remove(tailPos);
+            that.parent.balloonElement.classList.add('none');
+            that.parent.balloonElement.style.left = that.parent.padding;
+            that.parent.balloonElement.style.right = that.parent.padding;
+            that.parent.balloonElement.style.top = that.parent.padding;
+            that.parent.balloonElement.style.width = 'auto';
+
+        }
+ 
         if (that.data.html) {
             that.expand();
         } else if(that.data.action) {
@@ -262,35 +283,43 @@ MOS.HotSpotDot.prototype.testPosition = function () {
         if (rect.left < 0) {
             rv.left = false;
             rv.overAll = false;
-            //console.log('OOB left');
         }
 
         if (rect.top < 0) {
             rv.top = false;
             rv.overAll = false;
-            //console.log('OOB top');
         }
 
         if (rect.right > ww) {
             rv.right = false;
             rv.overAll = false;
-            //console.log('OOB right');
         }
 
         if (rect.bottom > wh) {
             rv.bottom = false;
             rv.overAll = false;
-            //console.log('OOB bottom');
         }
 
         return rv;
 
     };
     
-    var testOrder = [tailPos, 'left', 'right', 'top', 'bottom'],
+    var testOrder,
         workingPosition = 'none';
 
-    //var testOrder = [tailPos];
+    if (tailPos === 'bottom') {
+        testOrder = [tailPos, 'top', 'left', 'right', 'center'];
+    }
+    if (tailPos === 'top') {
+        testOrder = [tailPos, 'bottom', 'left', 'right', 'center'];
+    }
+    if (tailPos === 'left') {
+        testOrder = [tailPos, 'right', 'top', 'bottom', 'center'];
+    }
+    if (tailPos === 'right') {
+        testOrder = [tailPos, 'left', 'top', 'bottom', 'center'];
+    }
+    
     for (var i = 0; i < testOrder.length; i++) {
         
         var testPos = testOrder[i],
@@ -298,16 +327,21 @@ MOS.HotSpotDot.prototype.testPosition = function () {
 
         if (testRes.overAll) {
             workingPosition = testPos;
-            //console.log('Works: ' + testPos);
             break;
-        } else {
-            //console.log('Doesnt work: ' + testPos);
         }
         
     }
 
-    //console.log('Works: ' + workingPosition);
+    // if (workingPosition === 'none') {
+    //     for (var key in testRes) {
+    //         if (testRes[key]) {
+    //             workingPosition = key;
+    //             break;
+    //         }
+    //     }
+    // }
 
+    //console.log(workingPosition);
     return workingPosition;
     
 };
@@ -328,7 +362,13 @@ MOS.HotSpotDot.prototype.expand = function (showBalloon) {
         that.parent.balloonElement.classList.remove('collapsed');
     }
 
-    that.parent.currentDot = that;   
+    that.parent.currentDot = that;
+
+    that.parent.balloonElement.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
     that.isExpaned = true;
 
 };

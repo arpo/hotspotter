@@ -32,14 +32,14 @@ MOS.main = (function () {
 			html: '<h1>Atlantis</h1><p>Non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Excepteur sint occaecat cupidatat culpa qui officia deserunt mollit</p>'
 		});
 
-		var dot3 = hs.add({
-			title: 'This is a spot width action',
-			left: '70%',
-			top: '59%',
-			action: function() {
-				alert('Yay!');
-			}
-		});
+		// var dot3 = hs.add({
+		// 	title: 'This is a spot width action',
+		// 	left: '70%',
+		// 	top: '59%',
+		// 	action: function() {
+		// 		alert('Yay!');
+		// 	}
+		// });
 
 		var dot4 = hs.add({
 			title: 'Hot spot 4',

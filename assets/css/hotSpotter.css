@@ -14,7 +14,7 @@
     position: absolute;
     height: 100px;
     width: 100px;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0);
     box-sizing: border-box;
     pointer-events: none;
 }
@@ -75,6 +75,12 @@
     width: 0;
     height: 0;
     border-width: 10px; /* Tailsize */
+}
+
+.hotSpotter .hotSpotter-inner .hotspotter-balloon.none:after {
+    border-color: transparent transparent transparent transparent;
+    top: 0;
+    left: 0;
 }
 
 .hotSpotter .hotSpotter-inner .hotspotter-balloon.left:after {
