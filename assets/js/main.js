@@ -12,7 +12,7 @@ MOS.main = (function () {
 
 		var opt = {
 			trigger: 'click',  // click | hover
-			tailPosition: 'top'
+			tailPosition: 'bottom'
 		};
 		var hs = new MOS.HosSpotter('.hsWrapper', opt); 
 
@@ -41,15 +41,29 @@ MOS.main = (function () {
 			}
 		});
 
-
 		var dot4 = hs.add({
 			title: 'Hot spot 4',
-			left: '49.5%',
+			left: '5%',
 			top: '60%',
 			html: '<h1>Excepteur</h1><p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'
 		});
-
 		//dot4.show();
+
+		var dot5 = hs.add({
+			title: 'Hot spot 4',
+			left: '95%',
+			top: '60%',
+			html: '<h1>Excepteur</h1><p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'
+		});
+		//dot5.show();
+
+		var dot6 = hs.add({
+			title: 'Hot spot 4',
+			left: '50%',
+			top: '2%',
+			html: '<h1>Excepteur</h1><p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>'
+		});
+		//dot6.show();
 
 	}
 

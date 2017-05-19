@@ -10,6 +10,15 @@
     bottom: 0;
 }
 
+.hotSpotter .hotSpotter-inner .hotspotter-dummy-dot {
+    position: absolute;
+    height: 100px;
+    width: 100px;
+    background-color: rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    pointer-events: none;
+}
+
 .hotSpotter .hotSpotter-inner .hotspotter-dot {
     position: absolute;
     height: 15px;

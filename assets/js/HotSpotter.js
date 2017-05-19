@@ -20,8 +20,10 @@ MOS.HosSpotter = function (targetSelector, opt) {
     that.id = 'HosSpotter_' + MOS.HosSpotter.getId();
     that.dots = {};
     that.currentDot = null;
+    that.dummyDot = null;
     that.templates = {
         dot: '<div id="{{id}}" class="hotspotter-dot" style="left: {{left}}; top: {{top}};" title="{{title}}"></div>',
+        dummydot: '<div id="{{id}}" class="hotspotter-dummy-dot" style="left: {{left}}; top: {{top}};" title="{{title}}"></div>',
         balloon: '<div class="hotspotter-balloon collapsed {{tailPosition}}">{{html}}</div>'
     };
     that.isTouchDevice = ('ontouchstart' in window ||navigator.maxTouchPoints);
@@ -68,6 +70,21 @@ MOS.HosSpotter = function (targetSelector, opt) {
 
 MOS.HosSpotter.prototype = {};
 
+MOS.HosSpotter.prototype.addDummyDot = function () {
+
+    var that = this,
+        html = MOS.HotSpotDot.tmpl.put(that.templates.dummydot, {
+        id: 'hot-spotter-dummy-dot',
+        title: '',
+        top: '10px',
+        left: '10px'
+    });
+
+    that.container.insertAdjacentHTML('beforeend', html);
+    that.dummyDot = that.container.querySelector('#hot-spotter-dummy-dot');
+
+};
+
 MOS.HosSpotter.prototype.add = function (data) {
 
     var that = this;
@@ -105,6 +122,7 @@ MOS.HotSpotDot = function (data, parent) {
 
     that.left = that.data.left;
     that.top = that.data.top;
+    that.info = {};
     that.dotElement = null;
     that.id = 'HotSpotDot_' + MOS.HosSpotter.getId();
     MOS.HotSpotDot.all[that.id] = that;
@@ -120,7 +138,7 @@ MOS.HotSpotDot = function (data, parent) {
         top: data.top
     };
 
-    var html = that.tmpl.put(that.parent.templates.dot, tmpData);
+    var html = MOS.HotSpotDot.tmpl.put(that.parent.templates.dot, tmpData);
     container.insertAdjacentHTML('beforeend', html);
     that.dotElement = container.querySelector('#' + tmpData.id);
     that.dotSize = that.dotElement.offsetWidth;
@@ -163,33 +181,43 @@ MOS.HotSpotDot.prototype.show = function () {
     if(that.data.html || that.data.action) {
 
         tmpData = {html: that.data.html, tailPosition: tailPos};
-        html = that.tmpl.put(that.parent.templates.balloon, tmpData);
+        html = MOS.HotSpotDot.tmpl.put(that.parent.templates.balloon, tmpData);
         that.parent.balloonWrapper.innerHTML = html;
         that.parent.balloonElement = that.parent.balloonWrapper.querySelector('.hotspotter-balloon');
         tailSize = getTailSize();
-        that.width = that.parent.balloonElement.offsetWidth;
-        that.height = that.parent.balloonElement.offsetHeight;
+
         
-        if (tailPos === 'top') {
-            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + ((that.width - (that.dotSize)) * 0.5) + 'px)'; 
-            that.parent.balloonElement.style.top = 'calc(' + that.top + ' + ' + (tailSize + that.dotSize + that.parent.tailOffset) + 'px)'; 
-        }
+        that.info.width = that.parent.balloonElement.offsetWidth;
+        that.info.height = that.parent.balloonElement.offsetHeight;
+        that.info.mode = {
+            top: {},
+            bottom: {},
+            left: {},
+            right: {}
+        };
 
-        if (tailPos === 'bottom') {
-            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + ((that.width - (that.dotSize)) * 0.5) + 'px)'; 
-            that.parent.balloonElement.style.top = 'calc(' + (that.top) + ' - ' + (that.height + tailSize + that.parent.tailOffset) + 'px)'; 
-        }
+        that.info.mode.top.left = 'calc(' + that.left + ' - ' + ((that.info.width - (that.dotSize)) * 0.5) + 'px)'; 
+        that.info.mode.top.top = 'calc(' + that.top + ' + ' + (tailSize + that.dotSize + that.parent.tailOffset) + 'px)'; 
 
-        if (tailPos === 'right') {
-            that.parent.balloonElement.style.left = 'calc(' + that.left + ' - ' + (that.width + that.dotSize) + 'px)'; 
-            that.parent.balloonElement.style.top = 'calc(' + that.top + ' - ' + (that.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
-        }
+        that.info.mode.bottom.left = 'calc(' + that.left + ' - ' + ((that.info.width - (that.dotSize)) * 0.5) + 'px)'; 
+        that.info.mode.bottom.top = 'calc(' + (that.top) + ' - ' + (that.info.height + tailSize + that.parent.tailOffset) + 'px)';
 
-        if (tailPos === 'left') {
-            that.parent.balloonElement.style.left = 'calc(' + that.left + ' + ' + (that.dotSize + tailSize + that.parent.tailOffset) + 'px)'; 
-            that.parent.balloonElement.style.top = 'calc(' + that.top + ' - ' + (that.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
-        }
+        that.info.mode.right.left = 'calc(' + that.left + ' - ' + (that.info.width + that.dotSize) + 'px)'; 
+        that.info.mode.right.top = 'calc(' + that.top + ' - ' + (that.info.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
 
+        that.info.mode.left.left = 'calc(' + that.left + ' + ' + (that.dotSize + tailSize + that.parent.tailOffset) + 'px)'; 
+        that.info.mode.left.top = 'calc(' + that.top + ' - ' + (that.info.height * 0.5 - that.dotSize * 0.5) + 'px)'; 
+
+        var useThisTailPosition = that.testPosition();
+        console.log(useThisTailPosition);
+
+        if (useThisTailPosition !== 'none') {
+            that.parent.balloonElement.classList.remove(tailPos);
+            that.parent.balloonElement.classList.add(useThisTailPosition);
+            that.parent.balloonElement.style.left = that.info.mode[useThisTailPosition].left;
+            that.parent.balloonElement.style.top = that.info.mode[useThisTailPosition].top;
+        } 
+        
         if (that.data.html) {
             that.expand();
         } else if(that.data.action) {
@@ -202,6 +230,86 @@ MOS.HotSpotDot.prototype.show = function () {
         that.collapse();
     }
 
+};
+
+MOS.HotSpotDot.prototype.testPosition = function () {
+
+    var that = this;
+    var ww = window.innerWidth;
+    var wh = window.innerHeight;
+    var tailPos = that.parent.tailPosition;
+    var dPos;
+    if (!that.parent.dummyDot) that.parent.addDummyDot();
+    var dd = that.parent.dummyDot;
+
+    var test = function (tPos) {
+
+        var rect, 
+            rv = {
+                left: true,
+                right: true,
+                top: true,
+                bottom: true,
+                overAll: true
+            };
+
+        dd.style.left = that.info.mode[tPos].left;
+        dd.style.top = that.info.mode[tPos].top;
+        dd.style.width = that.info.width + 'px';
+        dd.style.height = that.info.height + 'px';
+        rect = dd.getBoundingClientRect();
+        
+        if (rect.left < 0) {
+            rv.left = false;
+            rv.overAll = false;
+            //console.log('OOB left');
+        }
+
+        if (rect.top < 0) {
+            rv.top = false;
+            rv.overAll = false;
+            //console.log('OOB top');
+        }
+
+        if (rect.right > ww) {
+            rv.right = false;
+            rv.overAll = false;
+            //console.log('OOB right');
+        }
+
+        if (rect.bottom > wh) {
+            rv.bottom = false;
+            rv.overAll = false;
+            //console.log('OOB bottom');
+        }
+
+        return rv;
+
+    };
+    
+    var testOrder = [tailPos, 'left', 'right', 'top', 'bottom'],
+        workingPosition = 'none';
+
+    //var testOrder = [tailPos];
+    for (var i = 0; i < testOrder.length; i++) {
+        
+        var testPos = testOrder[i],
+            testRes = test(testPos);
+
+        if (testRes.overAll) {
+            workingPosition = testPos;
+            //console.log('Works: ' + testPos);
+            break;
+        } else {
+            //console.log('Doesnt work: ' + testPos);
+        }
+        
+    }
+
+    //console.log('Works: ' + workingPosition);
+
+    return workingPosition;
+    
 };
 
 MOS.HotSpotDot.prototype.expand = function (showBalloon) {
@@ -246,7 +354,7 @@ MOS.HotSpotDot.prototype.remove = function () {
 
 };
 
-MOS.HotSpotDot.prototype.tmpl = {
+MOS.HotSpotDot.tmpl = {
     startTag: '{{',
     endTag: '}}',
     get: function (id) {
